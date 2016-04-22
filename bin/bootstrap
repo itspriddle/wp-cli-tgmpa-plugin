@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Usage: bootstrap
+#
+# This script installs dependencies required for developers to work on this
+# project and run its tests.
+
+set -e
+
+[ "$DEBUG" ] || [ "$CI" ] && set -x
+
+# Print help text and exit.
+if [[ "$1" = "-h" ]]; then
+  sed -ne '/^#/!q;s/.\{1,2\}//;1d;p' < "$0"
+  exit
+fi
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../ && pwd)"
+
+TMPDIR="${PROJECT_ROOT}/tmp"
+
+: ${WP_CLI_BIN_DIR:="${TMPDIR}/wp-cli-phar"}
+
+download() {
+  if [ "$(which curl)" ]; then
+    curl -s "$1" > "$2";
+  elif [ "$(which wget)" ]; then
+    wget -nv -O "$2" "$1"
+  fi
+}
+
+install_wp_cli() {
+  if [ ! -x "${WP_CLI_BIN_DIR}/wp" ]; then
+    mkdir -p "${WP_CLI_BIN_DIR}"
+    download https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli-nightly.phar "${WP_CLI_BIN_DIR}"/wp
+    chmod +x "${WP_CLI_BIN_DIR}"/wp
+  fi
+}
+
+download_behat() {
+  cd $PROJECT_ROOT
+
+  if [ "$(which composer)" ]; then
+    composer require --dev behat/behat='~2.5'
+  else
+    download https://getcomposer.org/installer installer
+    php installer
+    php composer.phar require --dev behat/behat='~2.5'
+  fi
+}
+
+install_db() {
+  mysql -e 'CREATE DATABASE IF NOT EXISTS wp_cli_test;' -uroot
+  mysql -e 'GRANT ALL PRIVILEGES ON wp_cli_test.* TO "wp_cli_test"@"localhost" IDENTIFIED BY "password1"' -uroot
+}
+
+install_wp_cli
+download_behat
+install_db

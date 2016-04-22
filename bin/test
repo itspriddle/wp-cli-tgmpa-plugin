@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Usage: test [args]
+#
+# This script runs the `behat` executable with any arguments passed. It is the
+# same as running `behat` directly, so you can do things like
+# `./bin/test --name='tgmpa-plugin info'`.
+
+set -e
+
+[ "$DEBUG" ] || [ "$CI" ] && set -x
+
+# Print help text and exit.
+if [[ "$1" = "-h" ]]; then
+  sed -ne '/^#/!q;s/.\{1,2\}//;1d;p' < "$0"
+  exit
+fi
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../ && pwd)"
+
+${PROJECT_ROOT}/vendor/bin/behat "$@"
