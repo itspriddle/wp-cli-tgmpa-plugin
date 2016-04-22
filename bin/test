@@ -15,6 +15,10 @@ if [[ "$1" = "-h" ]]; then
   exit
 fi
 
+if [ "$CI" ]; then
+  echo "PATH=${PATH}"
+fi
+
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../ && pwd)"
 
 ${PROJECT_ROOT}/vendor/bin/behat "$@"
