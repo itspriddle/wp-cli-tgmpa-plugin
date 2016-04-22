@@ -14,11 +14,6 @@ php:
 cache:
   - $HOME/.composer/cache
 
-env:
-  global:
-    - TMPDIR=/tmp
-    - WP_CLI_BIN_DIR=/tmp/wp-cli-phar
-
 before_script:
   - ./bin/bootstrap
 

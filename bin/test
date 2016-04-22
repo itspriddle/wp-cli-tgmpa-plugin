@@ -16,6 +16,7 @@ if [[ "$1" = "-h" ]]; then
 fi
 
 if [ "$CI" ]; then
+  export WP_CLI_BIN_DIR="${TMPDIR}/wp-cli-phar"
   echo "PATH=${PATH}"
 fi
 
