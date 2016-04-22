@@ -1,5 +1,10 @@
 <?php
 
+// Bail if this is Travis CI
+if (getenv("CI")) {
+  return;
+}
+
 // Create a tmp directory in the root of this project and use it for tests
 
 require_once __DIR__ . "/Process.php";
