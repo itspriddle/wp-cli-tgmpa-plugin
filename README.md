@@ -1,7 +1,5 @@
 # wp-cli-tgmpa-plugin
 
-[![Build Status](https://travis-ci.org/itspriddle/wp-cli-tgmpa-plugin.svg?branch=master)](https://travis-ci.org/itspriddle/wp-cli-tgmpa-plugin)
-
 This WP-CLI package provides the `wp tgmpa-plugin` command for working with
 plugins required using the [TGM Plugin Activation][] library.
 
