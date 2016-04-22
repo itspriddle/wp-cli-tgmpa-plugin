@@ -18,7 +18,7 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
    * Fields used with on `wp tgmpa-plugin list` when called without additional
    * fields.
    */
-  protected $fields = array(
+  private $fields = array(
     "name",
     "title",
     // "version",
@@ -46,7 +46,7 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
    *     ...
    *   )
    */
-  protected $plugins = array();
+  private $plugins = array();
 
   /**
    * Initializes a new WP_CLI_TGMPA_Plugin instance.
