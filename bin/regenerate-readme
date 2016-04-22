@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# Usage: regenerate-readme <README.md>
+#
+# This script updates the project README.md by collecting all help output for
+# `wp tgmpa-plugin` commands.
+
+[ "$DEBUG" ] && set -x
+
+: ${README:=README.md}
+
+find_in_help() {
+  if [[ "${2}" == *"${1}"* ]]; then
+    awk "
+      /^${1}/    { flag=1; next; }
+      /^[A-Z]+/  { flag=0 }
+      flag       { printf \"%s\\n\", \$0 }
+    " <<< "${2}" | cat
+  fi
+}
+
+description() {
+  find_in_help DESCRIPTION "${1}" | sed 's/^[[:space:]]*//'
+}
+
+print_help_block() {
+  text="$(find_in_help "${1}" "${2}" | sed -e 's/^ *//' -e '1d' )"
+  if [[ "$text" ]]; then
+    echo
+    echo "**${1}**"
+    echo
+    echo '```'
+    printf "%s\n" "$text"
+    echo '```'
+    echo
+  fi
+}
+
+generate_usage_for_commands() {
+  { while read -r line; do
+    printf "### %s\n" "$(awk '{ printf("%s %s %s", $1, $2, $3) }' <<< "${line}")"
+    echo
+    echo '```'
+    printf "%s\n" "${line}"
+    echo '```'
+    echo
+
+    cmd="$(awk '{ print $3 }' <<< "$line")"
+    helptext="$(wp tgmpa-plugin $cmd --help)"
+    description "${helptext}"
+
+    print_help_block OPTIONS  "${helptext}"
+    print_help_block EXAMPLES "${helptext}"
+  done < <(wp tgmpa-plugin | grep ": wp tgmpa-plugin" | sed "s/^.*: //")
+  } | cat -s | sed -e :a -e '/^\n*$/N;/\n$/ba' -e '/./,$!d'
+
+  echo
+}
+
+while IFS= read -r line; do
+  case "${line}" in
+    "## Usage")
+      usage="1"
+      printf "%s\n" "${line}"
+      ;;
+    "### "*)
+      if [ -z "$usage" ]; then
+        printf "%s\n" "${line}"
+      fi
+
+      if [ "$usage" ] && [ -z "$printed" ]; then
+        generate_usage_for_commands
+        printed="1"
+        deleting="1"
+      fi
+      ;;
+    "## "*)
+      usage=""
+      deleting=""
+      printf "%s\n" "${line}"
+      ;;
+    *)
+      [ -z "$deleting" ] && echo "${line}"
+      ;;
+  esac
+done < "${README}" > "${README}.tmp"
+
+mv -f "${README}.tmp" "${README}"
