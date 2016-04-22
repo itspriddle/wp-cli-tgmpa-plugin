@@ -15,11 +15,12 @@ if [[ "$1" = "-h" ]]; then
   exit
 fi
 
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../ && pwd)"
+
 if [ "$CI" ]; then
+  export TMPDIR="${PROJECT_ROOT}/tmp"
   export WP_CLI_BIN_DIR="${TMPDIR}/wp-cli-phar"
   echo "PATH=${PATH}"
 fi
-
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../ && pwd)"
 
 ${PROJECT_ROOT}/vendor/bin/behat "$@"
