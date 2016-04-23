@@ -79,7 +79,7 @@ while IFS= read -r line; do
       printf "%s\n" "${line}"
       ;;
     *)
-      [ -z "$deleting" ] && echo "${line}"
+      [ -z "$deleting" ] && printf "%s\n" "${line}"
       ;;
   esac
 done < "${README}" > "${README}.tmp"
