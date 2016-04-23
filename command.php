@@ -35,13 +35,13 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
    *
    *   array(
    *     "my-example" => array(
-   *       "name"                => "my-example",
-   *       "title"               => "My Example",
-   *       "version"             => "",
-   *       "required"            => true,
-   *       "installed"           => true,
-   *       "status"              => "active",
-   *       "source"              => "/var/www/wp/wp-content/themes/blah/plugins/my-example.zip",
+   *       "name"      => "my-example",
+   *       "title"     => "My Example",
+   *       "version"   => "",
+   *       "required"  => true,
+   *       "installed" => true,
+   *       "status"    => "active",
+   *       "source"    => "/var/www/wp/wp-content/themes/blah/plugins/my-example.zip",
    *     ),
    *     ...
    *   )
