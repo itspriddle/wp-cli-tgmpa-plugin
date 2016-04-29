@@ -198,11 +198,14 @@ Feature: Test that the tgmpa-plugin package works
     When I run `wp eval 'echo WPMU_PLUGIN_DIR;'`
     And save STDOUT as {WPMU_PLUGIN_DIR}
 
+    When I run `wp eval 'echo WP_CLI_TGMPA_Plugin::VERSION;'`
+    And save STDOUT as {WP_CLI_TGMPA_PLUGIN_VERSION}
+
     When I run `wp tgmpa-plugin info`
     Then the return code should be 0
     And STDOUT should be:
       """
-      wp-cli-tgmpa-plugin version:    0.1.0
+      wp-cli-tgmpa-plugin version:    {WP_CLI_TGMPA_PLUGIN_VERSION}
       TGM_Plugin_Activation version:  2.5.2
       TGM_Plugin_Activation location: {WPMU_PLUGIN_DIR}/tgmpa-example.php
       Plugins registered:             2
@@ -212,7 +215,7 @@ Feature: Test that the tgmpa-plugin package works
     Then the return code should be 0
     And STDOUT should be:
       """
-      0.1.0
+      {WP_CLI_TGMPA_PLUGIN_VERSION}
       """
 
     When I run `wp tgmpa-plugin info tgmpa-version`
