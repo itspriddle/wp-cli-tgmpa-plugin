@@ -160,10 +160,43 @@ wp tgmpa-plugin get bbpress --format=json
 ### wp tgmpa-plugin info
 
 ```
-wp tgmpa-plugin info
+wp tgmpa-plugin info [<section>]
 ```
 
 Show information about the TGMPA installation.
+
+**OPTIONS**
+
+```
+[<section>]
+Accepted values: version, tgmpa-version, tgmpa-path, plugin-count
+```
+
+**EXAMPLES**
+
+```
+Show all info:
+
+wp tgmpa-plugin info
+
+Show TGMPA version:
+
+wp tgmpa-plugin info tgmpa-version
+
+Show path to TGMPA class:
+
+wp tgmpa-plugin info tgmpa-path
+
+Edit TGMPA class in Vim:
+
+vim $(wp tgmpa-plugin info tgmpa-path)
+
+Check if TGMPA is installed:
+
+if wp tgmpa-plugin info &> /dev/null; then
+  # Do stuff, maybe `wp tgmpa-plugin install --all`
+fi
+```
 
 ### wp tgmpa-plugin install
 

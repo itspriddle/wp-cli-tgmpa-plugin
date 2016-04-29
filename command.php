@@ -101,35 +101,76 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
 
   /**
    * Show information about the TGMPA installation.
+   *
+   * ## OPTIONS
+   *
+   * [<section>]
+   * : Accepted values: version, tgmpa-version, tgmpa-path, plugin-count
+   *
+   * ## EXAMPLES
+   *
+   * Show all info:
+   *
+   *     wp tgmpa-plugin info
+   *
+   * Show TGMPA version:
+   *
+   *     wp tgmpa-plugin info tgmpa-version
+   *
+   * Show path to TGMPA class:
+   *
+   *     wp tgmpa-plugin info tgmpa-path
+   *
+   * Edit TGMPA class in Vim:
+   *
+   *     vim $(wp tgmpa-plugin info tgmpa-path)
+   *
+   * Check if TGMPA is installed:
+   *
+   *     if wp tgmpa-plugin info &> /dev/null; then
+   *       # Do stuff, maybe `wp tgmpa-plugin install --all`
+   *     fi
    */
-  public function info() {
-    $tgmpa   = new ReflectionClass("TGM_Plugin_Activation");
-    $file    = $tgmpa->getFileName();
-    $version = "Unknown";
+  public function info($args) {
+    $valid_args = array(
+      "version",
+      "tgmpa-version",
+      "tgmpa-path",
+      "plugin-count"
+    );
 
-    if (defined("TGM_Plugin_Activation::TGMPA_VERSION")) {
-      $version = TGM_Plugin_Activation::TGMPA_VERSION;
-      $this->debug("Detected TGM_Plugin_Activation version %s", $version);
+    if (empty($args) || $args[0] == "all") {
+      $section = false;
     } else {
-      $this->debug(
-        "Couldn't detect TGM_Plugin_Activation version at runtime, parsing %s",
-        $file
-      );
+      $section = $args[0];
 
-      $line = array_shift(preg_grep("/\* @version\s+(.*)\s*$/", file($file)));
-
-      if (!is_null($line) && strpos($line, "* @version") !== false) {
-        $version = trim(str_replace("* @version", "", $line));
-        $this->debug("Detected TGM_Plugin_Activation version %s", $version);
-      } else {
-        $this->debug("Couldn't detect TGM_Plugin_Activation in %s", $file);
+      if (!in_array($section, $valid_args)) {
+        WP_CLI::error("Invalid section, {$section}");
       }
     }
 
-    WP_CLI::line("wp-cli-tgmpa-plugin version:    " . self::VERSION);
-    WP_CLI::line("TGM_Plugin_Activation version:  " . $version);
-    WP_CLI::line("TGM_Plugin_Activation location: " . $file);
-    WP_CLI::line("Plugins registered:             " . count($this->plugins));
+    list($tgmpa_path, $tgmpa_version) = $this->tgmpa_version();
+
+    switch ($section) {
+      case "version":
+        WP_CLI::line(self::VERSION);
+        break;
+      case "tgmpa-version":
+        WP_CLI::line($tgmpa_version);
+        break;
+      case "tgmpa-path":
+        WP_CLI::line($tgmpa_path);
+        break;
+      case "plugin-count":
+        WP_CLI::line(count($this->plugins));
+        break;
+      default:
+        WP_CLI::line("wp-cli-tgmpa-plugin version:    " . self::VERSION);
+        WP_CLI::line("TGM_Plugin_Activation version:  " . $tgmpa_version);
+        WP_CLI::line("TGM_Plugin_Activation location: " . $tgmpa_path);
+        WP_CLI::line("Plugins registered:             " . count($this->plugins));
+        break;
+    }
   }
 
   /**
@@ -535,6 +576,41 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
     }
 
     return $sources;
+  }
+
+  /**
+   * Find the installed TGMPA version.
+   *
+   * Grab the TGMPA version by class constant or by parsing the file itself. If
+   * the version can't be detected for some reason, return unknown.
+   *
+   * @return array
+   */
+  private function tgmpa_version() {
+    $tgmpa   = new ReflectionClass("TGM_Plugin_Activation");
+    $file    = $tgmpa->getFileName();
+    $version = "Unknown";
+
+    if (defined("TGM_Plugin_Activation::TGMPA_VERSION")) {
+      $version = TGM_Plugin_Activation::TGMPA_VERSION;
+      $this->debug("Detected TGM_Plugin_Activation version %s", $version);
+    } else {
+      $this->debug(
+        "Couldn't detect TGM_Plugin_Activation version at runtime, parsing %s",
+        $file
+      );
+
+      $line = array_shift(preg_grep("/\* @version\s+(.*)\s*$/", file($file)));
+
+      if (!is_null($line) && strpos($line, "* @version") !== false) {
+        $version = trim(str_replace("* @version", "", $line));
+        $this->debug("Detected TGM_Plugin_Activation version %s", $version);
+      } else {
+        $this->debug("Couldn't detect TGM_Plugin_Activation in %s", $file);
+      }
+    }
+
+    return array($file, $version);
   }
 
   /**
