@@ -208,6 +208,41 @@ Feature: Test that the tgmpa-plugin package works
       Plugins registered:             2
       """
 
+    When I run `wp tgmpa-plugin info version`
+    Then the return code should be 0
+    And STDOUT should be:
+      """
+      0.1.0
+      """
+
+    When I run `wp tgmpa-plugin info tgmpa-version`
+    Then the return code should be 0
+    And STDOUT should be:
+      """
+      2.5.2
+      """
+
+    When I run `wp tgmpa-plugin info tgmpa-path`
+    Then the return code should be 0
+    And STDOUT should be:
+      """
+      {WPMU_PLUGIN_DIR}/tgmpa-example.php
+      """
+
+    When I run `wp tgmpa-plugin info plugin-count`
+    Then the return code should be 0
+    And STDOUT should be:
+      """
+      2
+      """
+
+    When I try `wp tgmpa-plugin info bogus`
+    Then the return code should be 1
+    And STDERR should be:
+      """
+      Error: Invalid section, bogus
+      """
+
 
   Scenario: tgmpa-plugin install
     Given a WP install
