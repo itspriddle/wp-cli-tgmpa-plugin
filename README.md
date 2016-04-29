@@ -9,15 +9,11 @@ Quick links: [Installing](#installing) | [Usage](#usage) | [Troubleshooting](#tr
 
 ### Installation as a WP-CLI package
 
-~~Installing this package requires WP-CLI v0.23.0 or greater. Update to the
-latest stable release with `wp cli update`.~~
+Installing this package requires WP-CLI v0.23.0 or greater. Update to the
+latest stable release with `wp cli update`.
 
-~~Once you've done so, you can install this package with `wp package install
-itspriddle/wp-cli-tgmpa-plugin`~~
-
-Note: This package is still in early development and is not yet available in
-the WP-CLI package index. If you are reading this message, please install
-manually for now.
+Once you've done so, you can install this package with `wp package install
+itspriddle/wp-cli-tgmpa-plugin`
 
 ### Manual installation
 
