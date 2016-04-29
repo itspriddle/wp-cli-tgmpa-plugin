@@ -12,7 +12,7 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
   /**
    * Version of this package.
    */
-  const VERSION = "0.1.0";
+  const VERSION = "0.1.1";
 
   /**
    * Fields used with on `wp tgmpa-plugin list` when called without additional
