@@ -23,7 +23,7 @@ description() {
 }
 
 print_help_block() {
-  text="$(find_in_help "${1}" "${2}" | sed -e 's/^ *//' -e '1d' )"
+  text="$(find_in_help "${1}" "${2}" | sed -E 's/^ {2,4}//; 1d')"
   if [[ "$text" ]]; then
     echo
     echo "**${1}**"
