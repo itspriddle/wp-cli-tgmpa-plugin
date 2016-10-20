@@ -1,6 +1,7 @@
 {
   "name": "itspriddle/wp-cli-tgmpa-plugin",
   "description": "Manage TGMPA plugins with WP-CLI",
+  "type": "wp-cli-package",
   "license": "MIT",
   "homepage": "https://github.com/itspriddle/wp-cli-tgmpa-plugin",
   "authors": [
