@@ -15,6 +15,11 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
   const VERSION = "0.1.1";
 
   /**
+   * TGM_Plugin_Activation instance
+   */
+  private $tgmpa;
+
+  /**
    * Fields used with on `wp tgmpa-plugin list` when called without additional
    * fields.
    */
@@ -62,24 +67,16 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
 
     do_action("tgmpa_register");
 
-    $tgmpa = TGM_Plugin_Activation::get_instance();
-    $tgmpa->populate_file_path();
+    $this->tgmpa = TGM_Plugin_Activation::get_instance();
+    $this->tgmpa->populate_file_path();
 
     $installed_plugins = get_plugins();
 
-    foreach ($tgmpa->plugins as $p) {
-      // If the source is blank or "repo" the plugin comes from wordpress.org,
-      // otherwise a bundled zip file or an external URL.
-      if (!isset($p["source"]) || $p["source"] == "repo") {
-        $source = $p["slug"];
-      } else {
-        $source = $p["source"];
-      }
-
+    foreach ($this->tgmpa->plugins as $p) {
       $status    = is_plugin_active($p["file_path"]) ? "active" : "inactive";
       $installed = array_key_exists($p["file_path"], $installed_plugins);
 
-      // Replace slug with name and name with title  for parity with WP-CLI's
+      // Replace slug with name and name with title for parity with WP-CLI's
       // plugin commands.
       $this->plugins[$p["slug"]] = array(
         "name"      => $p["slug"],
@@ -88,7 +85,7 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
         "required"  => $p["required"],
         "installed" => $installed,
         "status"    => $status,
-        "source"    => $source,
+        "source"    => $this->find_download_url($p),
       );
     }
 
@@ -576,6 +573,25 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
     }
 
     return $sources;
+  }
+
+  /**
+   * Find the given plugin's download URL.
+   *
+   * @return string
+   */
+  private function find_download_url($plugin) {
+    if (method_exists($this->tgmpa, "get_download_url")) { // TGMPA >= 2.5.0
+      return $this->tgmpa->get_download_url($plugin["slug"]);
+    } else { // TGMPA < 2.5.0
+      if (!isset($plugin["source"]) || $plugin["source"] == "repo") {
+        return $plugin["slug"];
+      } elseif (!preg_match("|^http(s)?://|", $plugin["source"])) {
+        return $this->tgmpa->default_path . $plugin["source"];
+      } else {
+        return $plugin["source"];
+      }
+    }
   }
 
   /**
