@@ -14,7 +14,7 @@ function example_tgmpa_register_required_plugins() {
 		array(
 			'name'               => 'Example Plugin', // The plugin name.
 			'slug'               => 'example-plugin', // The plugin slug (typically the folder name).
-			'source'             => dirname( __FILE__ ) . '/tgmpa-example/example-plugin.zip', // The plugin source.
+			'source'             => 'example-plugin.zip', // The plugin source.
 			'required'           => true, // If false, the plugin is only 'recommended' instead of required.
 			'version'            => '1', // E.g. 1.0.0. If set, the active plugin must be this version or higher. If the plugin version is higher than the plugin version installed, the user will be notified to update the plugin.
 			'force_activation'   => false, // If true, plugin is activated upon theme activation and cannot be deactivated until theme switch.
@@ -44,7 +44,7 @@ function example_tgmpa_register_required_plugins() {
 	 */
 	$config = array(
 		'id'           => 'example-tgmpa',                 // Unique ID for hashing notices for multiple instances of TGMPA.
-		'default_path' => '',                      // Default absolute path to bundled plugins.
+		'default_path' => dirname( __FILE__ ) . '/tgmpa-example/',                      // Default absolute path to bundled plugins.
 		'menu'         => 'tgmpa-install-plugins', // Menu slug.
 		'parent_slug'  => 'plugins.php',            // Parent menu slug.
 		'capability'   => 'manage_options',    // Capability needed to view plugin install page, should be a capability associated with the parent menu used.
