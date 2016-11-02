@@ -10,6 +10,19 @@ Feature: Test that the tgmpa-plugin package works
       """
 
 
+  Scenario: TGM_Plugin_Activation class is not loaded
+    Given a WP install
+    And I have TGMPA installed
+    But tgmpa_register is not set
+
+    When I try `wp tgmpa-plugin info`
+    Then the return code should be 1
+    Then STDERR should be:
+      """
+      Error: tgmpa_register hook not found!
+      """
+
+
   Scenario: TGM_Plugin_Activation class is loaded
     Given a WP install
     And I have TGMPA installed
