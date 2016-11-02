@@ -67,7 +67,14 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
 
     do_action("tgmpa_register");
 
-    $this->tgmpa = TGM_Plugin_Activation::get_instance();
+    if (method_exists("TGM_Plugin_Activation", "get_instance")) {
+      // TGMPA >= 2.4.0
+      $this->tgmpa = TGM_Plugin_Activation::get_instance();
+    } else {
+      // TGMPA < 2.4.0
+      $this->tgmpa = TGM_Plugin_Activation::$instance;
+    }
+
     $this->tgmpa->populate_file_path();
 
     $installed_plugins = get_plugins();
