@@ -20,3 +20,13 @@ $steps->Given("/^I have TGMPA installed$/", function($world) {
 
   $world->proc("cd {$dir} && zip -r {$dest} {$source}")->run_check();
 });
+
+$steps->Given("/^tgmpa_register is not set$/", function($world) {
+  $tgmpa = $world->variables["RUN_DIR"] . "/wp-content/mu-plugins/tgmpa-example.php";
+
+  // Simulate missing action
+  $disable = "\n\nremove_action('tgmpa_register', 'example_tgmpa_register_required_plugins');";
+  $content = file_get_contents($tgmpa) . $disable;
+
+  file_put_contents($tgmpa, $content);
+});

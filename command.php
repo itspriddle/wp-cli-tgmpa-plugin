@@ -65,9 +65,20 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
       WP_CLI::error("TGM_Plugin_Activation not loaded!");
     }
 
+    if (!has_action("tgmpa_register")) {
+      WP_CLI::error("tgmpa_register hook not found!");
+    }
+
     do_action("tgmpa_register");
 
-    $this->tgmpa = TGM_Plugin_Activation::get_instance();
+    if (method_exists("TGM_Plugin_Activation", "get_instance")) {
+      // TGMPA >= 2.4.0
+      $this->tgmpa = TGM_Plugin_Activation::get_instance();
+    } else {
+      // TGMPA < 2.4.0
+      $this->tgmpa = TGM_Plugin_Activation::$instance;
+    }
+
     $this->tgmpa->populate_file_path();
 
     $installed_plugins = get_plugins();
