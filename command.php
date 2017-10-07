@@ -30,7 +30,8 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
     "required",
     "installed",
     "status",
-    // "source"
+    // "source",
+    // "external"
   );
 
   /**
@@ -47,6 +48,7 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
    *       "installed" => true,
    *       "status"    => "active",
    *       "source"    => "/var/www/wp/wp-content/themes/blah/plugins/my-example.zip",
+   *       "external"  => false,
    *     ),
    *     ...
    *   )
@@ -97,6 +99,7 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
         "installed" => $installed,
         "status"    => $status,
         "source"    => $this->find_download_url($p),
+        "external"  => $this->is_external($p),
       );
     }
 
@@ -222,6 +225,10 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
    * Install specific TGMPA plugins:
    *
    *     wp tgmpa-plugin install some-plugin another-plugin
+   *
+   * Update external TGMPA plugins:
+   *
+   *     wp tgmpa-plugin install --force $(wp tgmpa-plugin list --field=name --external=true)
    */
   public function install($args, $assoc_args = array()) {
     if ($this->has_flag($assoc_args, "all")) {
@@ -312,6 +319,7 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
    *
    * * source
    * * version
+   * * external
    *
    * ## EXAMPLES
    *
@@ -349,7 +357,7 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
     $all = $this->plugins;
 
     foreach ($all as $key => $item) {
-      foreach ($this->fields as $field) {
+      foreach ($item as $field => $_) {
         if (isset($assoc_args[$field]) && $assoc_args[$field] != $item[$field]) {
           unset($all[$key]);
         }
@@ -603,6 +611,19 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
         return $plugin["source"];
       }
     }
+  }
+
+  /**
+   * Determines if the given plugin is installed from an external source (i.e.
+   * not bundled in the theme or hosted on wordpress.org).
+   *
+   * @param array $plugin - TGMPA plugin data
+   *
+   * @return boolean
+   */
+  private function is_external($plugin) {
+    return isset($plugin["source"]) &&
+      preg_match("|^http(s)?://|", $plugin["source"]);
   }
 
   /**

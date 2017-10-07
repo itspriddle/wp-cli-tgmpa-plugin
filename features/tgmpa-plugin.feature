@@ -396,6 +396,13 @@ Feature: Test that the tgmpa-plugin package works
       [{"name":"example-plugin","title":"Example Plugin","required":true,"installed":true,"status":"inactive"},{"name":"buddypress","title":"BuddyPress","required":false,"installed":false,"status":"inactive"}]
       """
 
+    When I run `wp tgmpa-plugin list --fields=name,external --no-external`
+    Then the return code should be 0
+    And STDOUT should be a table containing rows:
+      | name           | external |
+      | buddypress     |          |
+      | example-plugin |          |
+
 
   Scenario: tgmpa-plugin path
     Given a WP install
