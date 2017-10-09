@@ -696,6 +696,7 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
 WP_CLI::add_hook("before_wp_config_load", function() {
   if (!defined("WP_ADMIN") && getenv("WP_ADMIN")) {
     define("WP_ADMIN", true);
+    $_SERVER["PHP_SELF"] = "/wp-admin/index.php";
     WP_CLI::debug("defined WP_ADMIN");
   }
 });
