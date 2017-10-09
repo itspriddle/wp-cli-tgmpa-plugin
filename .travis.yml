@@ -17,4 +17,4 @@ cache:
 before_script:
   - ./bin/bootstrap
 
-script: ./bin/test --no-ansi
+script: ./bin/test
