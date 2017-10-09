@@ -39,7 +39,7 @@ Feature: Test that the tgmpa-plugin package works
 
     When I run `WP_ADMIN=true wp eval 'var_dump(WP_ADMIN);'`
     Then the return code should be 0
-    And STDOUT should be:
+    And STDOUT should contain:
       """
       bool(true)
       """
@@ -52,9 +52,9 @@ Feature: Test that the tgmpa-plugin package works
     When I run `wp tgmpa-plugin install example-plugin`
     And I run `wp tgmpa-plugin activate example-plugin`
     Then the return code should be 0
-    And STDOUT should be:
+    And STDOUT should contain:
       """
-      Success: Plugin 'example-plugin' activated.
+      Plugin 'example-plugin' activated.
       """
 
     When I run `wp tgmpa-plugin deactivate example-plugin`
@@ -63,8 +63,9 @@ Feature: Test that the tgmpa-plugin package works
     Then the return code should be 0
     And STDOUT should be:
       """
-      Success: Plugin 'example-plugin' activated.
-      Success: Plugin 'buddypress' activated.
+      Plugin 'example-plugin' activated.
+      Plugin 'buddypress' activated.
+      Success: Activated 2 of 2 plugins.
       """
 
     When I run `wp tgmpa-plugin uninstall example-plugin --deactivate`
@@ -90,9 +91,9 @@ Feature: Test that the tgmpa-plugin package works
     When I run `wp tgmpa-plugin install example-plugin --activate`
     And I run `wp tgmpa-plugin deactivate example-plugin`
     Then the return code should be 0
-    And STDOUT should be:
+    And STDOUT should contain:
       """
-      Success: Plugin 'example-plugin' deactivated.
+      Plugin 'example-plugin' deactivated.
       """
 
     When I run `wp tgmpa-plugin install buddypress --activate`
@@ -101,8 +102,9 @@ Feature: Test that the tgmpa-plugin package works
     Then the return code should be 0
     And STDOUT should be:
       """
-      Success: Plugin 'example-plugin' deactivated.
-      Success: Plugin 'buddypress' deactivated.
+      Plugin 'example-plugin' deactivated.
+      Plugin 'buddypress' deactivated.
+      Success: Deactivated 2 of 2 plugins.
       """
 
     When I run `wp tgmpa-plugin uninstall example-plugin`
@@ -128,9 +130,9 @@ Feature: Test that the tgmpa-plugin package works
 
     When I run `wp tgmpa-plugin delete example-plugin`
     Then the return code should be 0
-    And STDOUT should be:
+    And STDOUT should contain:
       """
-      Success: Deleted 'example-plugin' plugin.
+      Deleted 'example-plugin' plugin.
       """
 
     When I try the previous command again
@@ -394,6 +396,7 @@ Feature: Test that the tgmpa-plugin package works
       [{"name":"example-plugin","title":"Example Plugin","required":true,"installed":true,"status":"inactive"},{"name":"buddypress","title":"BuddyPress","required":false,"installed":false,"status":"inactive"}]
       """
 
+
   Scenario: tgmpa-plugin path
     Given a WP install
     And I have TGMPA installed
@@ -437,15 +440,15 @@ Feature: Test that the tgmpa-plugin package works
     And I run `wp tgmpa-plugin install example-plugin`
 
     When I run `wp tgmpa-plugin toggle example-plugin`
-    Then STDOUT should be:
+    Then STDOUT should contain:
       """
-      Success: Plugin 'example-plugin' activated.
+      Plugin 'example-plugin' activated.
       """
 
     When I run `wp tgmpa-plugin toggle example-plugin`
-    Then STDOUT should be:
+    Then STDOUT should contain:
       """
-      Success: Plugin 'example-plugin' deactivated.
+      Plugin 'example-plugin' deactivated.
       """
 
     When I try `wp tgmpa-plugin toggle buddypress`
@@ -468,9 +471,9 @@ Feature: Test that the tgmpa-plugin package works
     And I have TGMPA installed
     And I run `wp tgmpa-plugin install example-plugin --activate`
 
-    When I run `wp tgmpa-plugin uninstall example-plugin`
-    Then the return code should be 0
-    And STDERR should be:
+    When I try `wp tgmpa-plugin uninstall example-plugin`
+    Then the return code should be 1
+    And STDERR should contain:
       """
       Warning: The 'example-plugin' plugin is active.
       """
@@ -480,8 +483,9 @@ Feature: Test that the tgmpa-plugin package works
     And STDOUT should be:
       """
       Deactivating 'example-plugin'...
-      Success: Plugin 'example-plugin' deactivated.
-      Success: Uninstalled and deleted 'example-plugin' plugin.
+      Plugin 'example-plugin' deactivated.
+      Uninstalled and deleted 'example-plugin' plugin.
+      Success: Uninstalled 1 of 1 plugins.
       """
 
     When I run `wp tgmpa-plugin install --all --activate`
@@ -490,11 +494,12 @@ Feature: Test that the tgmpa-plugin package works
     And STDOUT should be:
       """
       Deactivating 'example-plugin'...
-      Success: Plugin 'example-plugin' deactivated.
-      Success: Uninstalled and deleted 'example-plugin' plugin.
+      Plugin 'example-plugin' deactivated.
+      Uninstalled and deleted 'example-plugin' plugin.
       Deactivating 'buddypress'...
-      Success: Plugin 'buddypress' deactivated.
-      Success: Uninstalled and deleted 'buddypress' plugin.
+      Plugin 'buddypress' deactivated.
+      Uninstalled and deleted 'buddypress' plugin.
+      Success: Uninstalled 2 of 2 plugins.
       """
 
     When I run `wp tgmpa-plugin install --all`
@@ -502,8 +507,9 @@ Feature: Test that the tgmpa-plugin package works
     Then the return code should be 0
     And STDOUT should be:
       """
-      Success: Uninstalled and deleted 'example-plugin' plugin.
-      Success: Uninstalled and deleted 'buddypress' plugin.
+      Uninstalled and deleted 'example-plugin' plugin.
+      Uninstalled and deleted 'buddypress' plugin.
+      Success: Uninstalled 2 of 2 plugins.
       """
 
     When I try `wp tgmpa-plugin uninstall example-plugin`
