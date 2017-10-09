@@ -243,6 +243,10 @@ wp tgmpa-plugin install --all-recommended
 Install specific TGMPA plugins:
 
 wp tgmpa-plugin install some-plugin another-plugin
+
+Update external TGMPA plugins:
+
+wp tgmpa-plugin install --force $(wp tgmpa-plugin list --field=name --external)
 ```
 
 ### wp tgmpa-plugin is-installed
