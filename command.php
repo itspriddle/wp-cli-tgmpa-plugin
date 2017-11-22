@@ -600,16 +600,12 @@ class WP_CLI_TGMPA_Plugin extends WP_CLI_Command {
    * @return string
    */
   private function find_download_url($plugin) {
-    if (method_exists($this->tgmpa, "get_download_url")) { // TGMPA >= 2.5.0
-      return $this->tgmpa->get_download_url($plugin["slug"]);
-    } else { // TGMPA < 2.5.0
-      if (!isset($plugin["source"]) || $plugin["source"] == "repo") {
-        return $plugin["slug"];
-      } elseif (!preg_match("|^http(s)?://|", $plugin["source"])) {
-        return $this->tgmpa->default_path . $plugin["source"];
-      } else {
-        return $plugin["source"];
-      }
+    if (!isset($plugin["source"]) || $plugin["source"] == "repo") {
+      return $plugin["slug"];
+    } elseif (!preg_match("|^http(s)?://|", $plugin["source"])) {
+      return $this->tgmpa->default_path . $plugin["source"];
+    } else {
+      return $plugin["source"];
     }
   }
 
